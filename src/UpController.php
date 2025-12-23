@@ -1,10 +1,12 @@
 <?php
 
-namespace Azzarip\ApiBasicAuth;
+declare(strict_types=1);
+
+namespace Foodieneers\ApiAuth;
 
 use Illuminate\Routing\Controller;
 
-class UpController extends Controller
+final class UpController extends Controller
 {
     /**
      * Handle the incoming request.

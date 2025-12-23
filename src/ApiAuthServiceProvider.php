@@ -1,33 +1,31 @@
 <?php
 
-namespace Azzarip\ApiBasicAuth;
+declare(strict_types=1);
+
+namespace Foodieneers\ApiAuth;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class ApiBasicAuthServiceProvider extends PackageServiceProvider
+final class ApiAuthServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
+
         $package
-            ->name('api-basic-auth');
+            ->name('api-auth');
     }
 
-    public function packageBooted()
+    public function packageBooted(): void
     {
         $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('api.auth', ApiBasicAuthMiddleware::class);
+        $router->aliasMiddleware('api.auth', ApiAuthMiddleware::class);
 
         Http::macro('user', function (string $user) {
             $password = config("services.{$user}.outbound_password");
-            $baseUrl = rtrim(config("services.{$user}.endpoint"), '/');
+            $baseUrl = mb_rtrim((string) config("services.{$user}.endpoint"), '/');
 
             return Http::withBasicAuth($user, $password)
                 ->retry(5, 100)

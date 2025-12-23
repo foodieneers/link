@@ -1,9 +1,11 @@
 <?php
 
-use Azzarip\ApiBasicAuth\UpController;
+declare(strict_types=1);
+
+use Foodieneers\ApiAuth\UpController;
 use Illuminate\Support\Facades\Route;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Route::get('/test', UpController::class);
 });
 

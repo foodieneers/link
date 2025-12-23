@@ -1,10 +1,11 @@
 # Composer Related
 composer.lock
 /vendor
+/bootstrap
+storage
 
 # Frontend Assets
 /node_modules
-
 # Logs
 npm-debug.log
 yarn-error.log

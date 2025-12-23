@@ -1,9 +1,9 @@
 # Basic auth system for intraserver api communication
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/azzarip/api-basic-auth.svg?style=flat-square)](https://packagist.org/packages/azzarip/api-basic-auth)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/azzarip/api-basic-auth/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/azzarip/api-basic-auth/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/azzarip/api-basic-auth/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/azzarip/api-basic-auth/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/azzarip/api-basic-auth.svg?style=flat-square)](https://packagist.org/packages/azzarip/api-basic-auth)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/Foodieneers/api-basic-auth.svg?style=flat-square)](https://packagist.org/packages/Foodieneers/api-basic-auth)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/Foodieneers/api-basic-auth/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/Foodieneers/api-basic-auth/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/Foodieneers/api-basic-auth/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/Foodieneers/api-basic-auth/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/Foodieneers/api-basic-auth.svg?style=flat-square)](https://packagist.org/packages/Foodieneers/api-basic-auth)
 
 This package enables secure API communication between two Laravel applications using HTTP Basic Authentication.
 
@@ -26,7 +26,7 @@ In your `.env` or `config/services.php`, define the following:
 You can install the package via composer:
 
 ```bash
-composer require azzarip/api-basic-auth
+composer require Foodieneers/api-basic-auth
 ```
 
 In the `config/services.php` add the following
@@ -70,7 +70,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Azzarip](https://github.com/Azzarip)
+- [Foodieneers](https://github.com/Foodieneers)
 - [All Contributors](../../contributors)
 
 ## License
