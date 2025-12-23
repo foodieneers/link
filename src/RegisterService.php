@@ -38,8 +38,7 @@ final class RegisterService
                         if ($response === null) {
                             return true;
                         }
-
-                        return $response && $response->serverError();
+                        return $response->serverError();
                     }
                 )
                 ->withRequestMiddleware(function (RequestInterface $request) use ($key, $secret): RequestInterface {

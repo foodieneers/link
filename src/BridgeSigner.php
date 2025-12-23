@@ -85,14 +85,4 @@ private function pathWithQueryFromUri(\Psr\Http\Message\UriInterface $uri): stri
     {
         return bin2hex(random_bytes(16));
     }
-
-    private function pathWithQuery(string $url): string
-    {
-        $path = parse_url($url, PHP_URL_PATH) ?: '/';
-        $query = parse_url($url, PHP_URL_QUERY);
-
-        return (is_string($query) && $query !== '')
-            ? "{$path}?{$query}"
-            : $path;
-    }
 }

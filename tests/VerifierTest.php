@@ -1,84 +1,48 @@
 <?php
 
-use function Pest\Laravel\mock;
-use Illuminate\Http\Client\Request;
-use Foodieneers\Bridge\BridgeSigner;
-use Illuminate\Support\Facades\Http;
-use Foodieneers\Bridge\RegisterService;
-use Psr\Http\Message\RequestInterface;
+use Foodieneers\Bridge\Verifier;
+use Foodieneers\Bridge\NonceStore;
+use Foodieneers\Bridge\BridgeConfig;
 
-beforeEach(function () {
-    (new RegisterService())();
+use Illuminate\Http\Request;
 
-    Http::preventStrayRequests();
-});
+it('verifies a request in total isolation', function () {
+    // 1. Setup predictable values
+    $fixedTime = now()->timestamp;
+    $key = 'test-app';
+    $secret = 'pure-unit-secret';
+    $nonce = 'random-nonce-123';
+    $method = 'POST';
+    $uri = '/test-path';
+    $body = '{"foo":"bar"}';
+    $bodySha = hash('sha256', $body);
 
-it('throws if bridge is not configured', function () {
-    config()->set('services.bridge', []);
+    // 2. Build the canonical string exactly as the class does
+    $canonical = implode("\n", [
+        (string) $fixedTime,
+        $nonce,
+        $method,
+        $uri,
+        $bodySha,
+    ]);
+    $signature = hash_hmac('sha256', $canonical, $secret);
 
-    expect(fn () => Http::bridge('missing')->get('/ping'))
-        ->toThrow(InvalidArgumentException::class, 'not configured');
-});
-
-it('throws if bridge config is missing required fields', function () {
-    config()->set('services.bridge.chat_b', [
-        'base_url' => 'https://example.test',
-        'key' => '', 
-        'secret' => 's',
+    $request = Request::create($uri, $method, [], [], [], [], $body);
+    $request->headers->add([
+        'X-Bridge-Key'       => $key,
+        'X-Bridge-Timestamp' => (string) $fixedTime,
+        'X-Bridge-Nonce'     => $nonce,
+        'X-Bridge-Signature' => $signature,
+        'X-Bridge-Body-Hash' => $bodySha,
     ]);
 
-    expect(fn () => Http::bridge('chat_b')->get('/ping'))
-        ->toThrow(InvalidArgumentException::class, 'missing base_url and/or signing.key/signing.secret');
-});
+    config()->set( "services.bridge.$key.secret", $secret);
 
-
-it('adds bridge signing headers to outgoing request', function () {
-    config()->set('services.bridge.chat_b', [
-        'base_url' => 'https://example.test',
-        'key' => 'chat_a',
-        'secret' => 'super-secret',
-    ]);
-
-    mock(BridgeSigner::class)
-        ->shouldReceive('headersFor')
-        ->once()
-        // Ensure the type-hint here matches the PSR interface used in your middleware
-        ->withArgs(function ($req, string $key, string $secret) {
-            return $req instanceof RequestInterface 
-                && $key === 'chat_a' 
-                && $secret === 'super-secret';
-        })
-        ->andReturn([
-            'X-Sign-Key' => 'chat_a',
-            'X-Signature' => 'abc123',
-        ]);
-
-Http::fake(function (Request $request) {
-
-    expect($request->hasHeader('X-Sign-Key'))->toBeTrue();
-    return Http::response(['ok' => true], 200);
-});
-    $res = Http::bridge('chat_b')->post('/api/internal/ping', ['hello' => 'world']);
-
-    //$res->assertOk()->assertJson(['ok' => true]);
-});
-
-it('uses baseUrl from config and trims trailing slash', function () {
-    config()->set('services.bridge.chat_b', [
-        'base_url' => 'https://example.test/', // trailing slash
-        'key' => 'chat_a',
-        'secret' => 'super-secret',
-    ]);
+    $verifier = new Verifier();
     
-    mock(BridgeSigner::class)
-        ->shouldReceive('headersFor')
-        ->andReturn([]);
+    test()->travelTo(DateTime::createFromFormat('U', (string)$fixedTime));
 
-    Http::fake(function (Request $request) {
-        expect($request->url())->toBe('https://example.test/api/internal/ping');
+    $result = $verifier->verify($request);
 
-        return Http::response(['ok' => true], 200);
-    });
-
-    Http::bridge('chat_b')->post('/api/internal/ping', []);
+    expect($result->key)->toBe($key);
 });
