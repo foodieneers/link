@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use Foodieneers\ApiAuth\Tests\TestCase;
+use Foodieneers\Bridge\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);
