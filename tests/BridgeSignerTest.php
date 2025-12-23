@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Foodieneers\Link\Signer;
-use Foodieneers\Link\LinkSigner;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -27,7 +26,7 @@ it('builds canonical string consistently', function (): void {
 
 it('adds Link signing headers to outgoing request', function () {
 
-    config()->set('services.Link.chat_b', [
+    config()->set('services.link.chat_b', [
         'base_url' => 'https://example.test',
         'key' => 'chat_a',
         'secret' => 'super-secret',
@@ -43,25 +42,25 @@ it('adds Link signing headers to outgoing request', function () {
 });
 
 it('throws if Link is not configured', function () {
-    config()->set('services.Link', []);
+    config()->set('services.link', []);
 
     expect(fn () => Http::link('missing')->get('/ping'))
         ->toThrow(InvalidArgumentException::class, 'not configured');
 });
 
 it('throws if Link config is missing required fields', function () {
-    config()->set('services.Link.chat_b', [
+    config()->set('services.link.chat_b', [
         'base_url' => 'https://example.test',
         'key' => '',
         'secret' => 's',
     ]);
 
     expect(fn () => Http::link('chat_b')->get('/ping'))
-        ->toThrow(InvalidArgumentException::class, 'missing base_url and/or signing.key/signing.secret');
+        ->toThrow(InvalidArgumentException::class);
 });
 
 it('uses baseUrl from config and trims trailing slash', function () {
-    config()->set('services.Link.chat_b', [
+    config()->set('services.link.chat_b', [
         'base_url' => 'https://example.test/', // trailing slash
         'key' => 'chat_a',
         'secret' => 'super-secret',

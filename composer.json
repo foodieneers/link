@@ -1,5 +1,5 @@
 {
-    "name": "foodieneers/Link",
+    "name": "foodieneers/link",
     "description": "Basic auth system for Laravel Intraserver api communication",
     "type": "package",
     "keywords": [

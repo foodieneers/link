@@ -26,7 +26,6 @@ final readonly class Verifier
         throw_unless(ctype_digit($tsRaw), BadRequestException::class, 'Invalid timestamp.');
 
         $ts = (int) $tsRaw;
-
         $maxAge = $this->config->maxAgeSeconds();
         $now = time();
 

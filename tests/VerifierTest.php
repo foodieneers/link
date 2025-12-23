@@ -35,7 +35,7 @@ it('verifies a request in total isolation', function () {
         'X-Link-Body-Hash' => $bodySha,
     ]);
 
-    config()->set("services.Link.$key.secret", $secret);
+    config()->set("services.link.$key.secret", $secret);
 
     $verifier = new Verifier();
 

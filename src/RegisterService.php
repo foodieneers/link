@@ -14,7 +14,7 @@ final class RegisterService
 {
     public function __invoke(): void
     {
-        Http::macro('Link', function (string $name): PendingRequest {
+        Http::macro('link', function (string $name): PendingRequest {
             
             $link = config("services.link.$name");
 
@@ -42,7 +42,7 @@ final class RegisterService
                     }
                 )
                 ->withRequestMiddleware(function (RequestInterface $request) use ($key, $secret): RequestInterface {
-                    $headers = resolve(LinkSigner::class)->headersFor($request, key: $key, secret: $secret);
+                    $headers = resolve(Signer::class)->headersFor($request, key: $key, secret: $secret);
 
                     foreach ($headers as $name => $value) {
                         $request = $request->withHeader($name, $value);

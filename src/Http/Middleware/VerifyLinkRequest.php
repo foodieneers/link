@@ -20,7 +20,7 @@ final readonly class VerifyLinkRequest
         try {
             $result = $this->verifier->verify($request);
 
-            $request->attributes->set('Link.key', $result->key);
+            $request->attributes->set('link.key', $result->key);
 
             return $next($request);
         } catch (BadRequestException) {

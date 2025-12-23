@@ -14,9 +14,10 @@ use function Pest\Laravel\postJson;
 
 beforeEach(function () {
     Route::middleware(VerifyLinkRequest::class)
-        ->post('/_test/Link', fn (Request $request) => response()->json([
+        ->post('/_test/link', fn (Request $request) => 
+        response()->json([
             'ok' => true,
-            'Link_key' => $request->attributes->get('Link.key'),
+            'link_key' => $request->attributes->get('link.key'),
         ]));
 });
 
@@ -26,23 +27,23 @@ it('returns 400 when verifier throws BadRequestException', function () {
         ->once()
         ->andThrow(new BadRequestException('Missing headers'));
 
-    postJson('/_test/Link', ['x' => 1])
+    postJson('/_test/link', ['x' => 1])
         ->assertStatus(400)
         ->assertJson([
             'message' => 'Bad Request',
         ]);
 });
 
-it('passes through when verifier succeeds and sets Link.key attribute', function () {
+it('passes through when verifier succeeds and sets link.key attribute', function () {
     mock(Verifier::class)
         ->shouldReceive('verify')
         ->once()
-        ->andReturn(new VerificationResult('key', 1, 1));
+        ->andReturn(new VerificationResult('key', 1, '1'));
 
-    postJson('/_test/Link', ['x' => 1])
+    postJson('/_test/link', ['x' => 1])
         ->assertOk()
         ->assertJson([
             'ok' => true,
-            'Link_key' => 'key',
+            'link_key' => 'key',
         ]);
 });
