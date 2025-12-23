@@ -19,7 +19,7 @@ beforeEach(function () {
         });
 });
 
-it('returns 401 (or 400) when verifier throws BadRequestException', function () {
+it('returns 400 when verifier throws BadRequestException', function () {
     mock(Verifier::class)
         ->shouldReceive('verify')
         ->once()
