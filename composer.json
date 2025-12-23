@@ -24,6 +24,7 @@
     "require-dev": {
         "foodieneers/laravel-devtools": "dev-main",
         "matthewbdaly/artisan-standalone": "*",
+        "nunomaduro/mock-final-classes": "^1.2",
         "orchestra/testbench": "*"
     },
     "autoload": {
