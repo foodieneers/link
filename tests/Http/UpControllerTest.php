@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Foodieneers\ApiAuth\UpController;
 use Illuminate\Support\Facades\Route;
+use Foodieneers\Bridge\Http\Controllers\UpController;
 
 beforeEach(function (): void {
     Route::get('/test', UpController::class);
