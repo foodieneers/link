@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge;
+namespace Foodieneers\Link;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
-final readonly class BridgeSigner
+final readonly class Signer
 {
     public function __construct(
-        private BridgeConfig $config = new BridgeConfig(),
+        private LinkConfig $config = new LinkConfig(),
     ) {}
 
     /**

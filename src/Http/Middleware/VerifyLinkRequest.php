@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge\Http\Middleware;
+namespace Foodieneers\Link\Http\Middleware;
 
 use Closure;
-use Foodieneers\Bridge\Exceptions\BadRequestException;
-use Foodieneers\Bridge\Verifier;
+use Foodieneers\Link\Exceptions\BadRequestException;
+use Foodieneers\Link\Verifier;
 use Illuminate\Http\Request;
 
-final readonly class VerifyBridgeRequest
+final readonly class VerifyLinkRequest
 {
     public function __construct(
         private Verifier $verifier,
@@ -20,7 +20,7 @@ final readonly class VerifyBridgeRequest
         try {
             $result = $this->verifier->verify($request);
 
-            $request->attributes->set('bridge.key', $result->key);
+            $request->attributes->set('Link.key', $result->key);
 
             return $next($request);
         } catch (BadRequestException) {

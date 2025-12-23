@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge\Exceptions;
+namespace Foodieneers\Link\Exceptions;
 
 use RuntimeException;
 

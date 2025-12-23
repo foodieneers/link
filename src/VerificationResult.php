@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge;
+namespace Foodieneers\Link;
 
 final readonly class VerificationResult
 {

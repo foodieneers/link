@@ -1,8 +1,8 @@
 <?php
 
-namespace Foodieneers\Bridge\Tests;
+namespace Foodieneers\Link\Tests;
 
-use Foodieneers\Bridge\BridgeServiceProvider;
+use Foodieneers\Link\LinkServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -10,7 +10,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            BridgeServiceProvider::class,
+            LinkServiceProvider::class,
         ];
     }
 

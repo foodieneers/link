@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge;
+namespace Foodieneers\Link;
 
-final class BridgeConfig
+final class LinkConfig
 {
     public function headerKey(): string
     {

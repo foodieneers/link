@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Foodieneers\Bridge\NonceStore;
+use Foodieneers\Link\NonceStore;
 
 it('marks', function () {
     $nonce = new NonceStore();

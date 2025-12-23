@@ -7,6 +7,6 @@ arch('it will not use debugging functions')
     ->expect(['dd', 'dump', 'ray'])
     ->each->not->toBeUsed();
 
-it('has the bridge macro registered', function () {
-    expect(Http::hasMacro('bridge'))->toBeTrue();
+it('has the Link macro registered', function () {
+    expect(Http::hasMacro('link'))->toBeTrue();
 });

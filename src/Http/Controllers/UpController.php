@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge\Http\Controllers;
+namespace Foodieneers\Link\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge;
+namespace Foodieneers\Link;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -14,21 +14,23 @@ final class RegisterService
 {
     public function __invoke(): void
     {
-        Http::macro('bridge', function (string $name): PendingRequest {
-            $bridge = config("services.bridge.$name");
+        Http::macro('Link', function (string $name): PendingRequest {
+            
+            $link = config("services.link.$name");
 
-            throw_unless(is_array($bridge), InvalidArgumentException::class, "Bridge [$name] not configured at services.bridges.$name.");
+            throw_unless(is_array($link), InvalidArgumentException::class, "Link [$name] not configured at services.links.$name.");
 
-            $baseUrl = mb_rtrim((string) ($bridge['base_url'] ?? ''), '/');
-            $timeout = 10;
+            $baseUrl = mb_rtrim((string) ($link['base_url'] ?? ''), '/');
 
-            $key = (string) ($bridge['key'] ?? '');
-            $secret = (string) ($bridge['secret'] ?? '');
+            $key = (string) $link['key'];
+            $secret = (string) $link['secret'];
 
-            throw_if($baseUrl === '' || $key === '' || $secret === '', InvalidArgumentException::class, "Bridge [$name] missing base_url and/or signing.key/signing.secret.");
+            throw_if($baseUrl === '', InvalidArgumentException::class, "Link [$name] missing base_url.");
+            throw_if($key === '', InvalidArgumentException::class, "Link [$name] missing key.");
+            throw_if($secret === '', InvalidArgumentException::class, "Link [$name] missing secret.");
 
             return Http::baseUrl($baseUrl)
-                ->timeout($timeout)
+                ->timeout(30)
                 ->retry(
                     times: 5,
                     sleepMilliseconds: 200,
@@ -36,12 +38,11 @@ final class RegisterService
                         if ($response === null) {
                             return true;
                         }
-
                         return $response->serverError();
                     }
                 )
                 ->withRequestMiddleware(function (RequestInterface $request) use ($key, $secret): RequestInterface {
-                    $headers = resolve(BridgeSigner::class)->headersFor($request, key: $key, secret: $secret);
+                    $headers = resolve(LinkSigner::class)->headersFor($request, key: $key, secret: $secret);
 
                     foreach ($headers as $name => $value) {
                         $request = $request->withHeader($name, $value);

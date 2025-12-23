@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge;
+namespace Foodieneers\Link;
 
-use Foodieneers\Bridge\Exceptions\BadRequestException;
+use Foodieneers\Link\Exceptions\BadRequestException;
 use Illuminate\Http\Request;
 
 final readonly class Verifier
 {
     public function __construct(
-        private BridgeConfig $config = new BridgeConfig(),
+        private LinkConfig $config = new LinkConfig(),
         private NonceStore $nonces = new NonceStore(),
     ) {}
 
@@ -21,7 +21,7 @@ final readonly class Verifier
         $nonce = (string) $request->header($this->config->headerNonce());
         $sig = (string) $request->header($this->config->headerSig());
 
-        throw_if($key === '' || $tsRaw === '' || $nonce === '' || $sig === '', BadRequestException::class, 'Missing bridge signature headers.');
+        throw_if($key === '' || $tsRaw === '' || $nonce === '' || $sig === '', BadRequestException::class, 'Missing Link signature headers.');
 
         throw_unless(ctype_digit($tsRaw), BadRequestException::class, 'Invalid timestamp.');
 
@@ -80,12 +80,12 @@ final readonly class Verifier
 
     private function resolveSecret(string $key): string
     {
-        $secret = config("services.bridge.$key.secret");
+        $secret = config("services.Link.$key.secret");
 
         if (is_string($secret) && $secret !== '') {
             return $secret;
         }
 
-        throw new BadRequestException("Unknown bridge client [$key].");
+        throw new BadRequestException("Unknown Link client [$key].");
     }
 }

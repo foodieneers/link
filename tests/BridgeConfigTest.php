@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Foodieneers\Bridge\BridgeConfig;
+use Foodieneers\Link\LinkConfig;
 
 it('has correct headers', function (): void {
-    $config = new BridgeConfig();
+    $config = new LinkConfig();
 
     expect($config->headerKey())->toBe('X-Sign-Key');
     expect($config->headerTs())->toBe('X-Sign-Ts');
@@ -15,7 +15,7 @@ it('has correct headers', function (): void {
 });
 
 it('has correct data', function () {
-    $config = new BridgeConfig();
+    $config = new LinkConfig();
 
     expect($config->maxAgeSeconds())->toBe(300);
     expect($config->nonceTtlSeconds())->toBe(330);

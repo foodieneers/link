@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Foodieneers\Bridge\Http\Controllers\UpController;
+use Foodieneers\Link\Http\Controllers\UpController;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function (): void {

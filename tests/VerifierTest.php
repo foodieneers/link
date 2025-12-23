@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Foodieneers\Bridge\Verifier;
+use Foodieneers\Link\Verifier;
 use Illuminate\Http\Request;
 
 it('verifies a request in total isolation', function () {
@@ -28,14 +28,14 @@ it('verifies a request in total isolation', function () {
 
     $request = Request::create($uri, $method, [], [], [], [], $body);
     $request->headers->add([
-        'X-Bridge-Key' => $key,
-        'X-Bridge-Timestamp' => (string) $fixedTime,
-        'X-Bridge-Nonce' => $nonce,
-        'X-Bridge-Signature' => $signature,
-        'X-Bridge-Body-Hash' => $bodySha,
+        'X-Link-Key' => $key,
+        'X-Link-Timestamp' => (string) $fixedTime,
+        'X-Link-Nonce' => $nonce,
+        'X-Link-Signature' => $signature,
+        'X-Link-Body-Hash' => $bodySha,
     ]);
 
-    config()->set("services.bridge.$key.secret", $secret);
+    config()->set("services.Link.$key.secret", $secret);
 
     $verifier = new Verifier();
 

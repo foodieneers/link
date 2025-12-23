@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Foodieneers\Bridge;
+namespace Foodieneers\Link;
 
 final class NonceStore
 {
     public function seen(): bool
     {
-        return false;
         // $this->cache()->has($this->cacheKey($key, $nonce, $ts));
+        return false;
     }
 
     public function mark(): void
@@ -19,12 +19,12 @@ final class NonceStore
 
     //     private function cacheKey(string $key, string $nonce, int $ts): string
     //     {
-    //         return "bridge:nonce:$key:$ts:$nonce";
+    //         return "Link:nonce:$key:$ts:$nonce";
     //     }
 
     //     private function cache()
     //     {
-    //         $store = config('bridge.cache_store');
+    //         $store = config('Link.cache_store');
     //         return $store ? Cache::store($store) : Cache::store();
     //     }
 }

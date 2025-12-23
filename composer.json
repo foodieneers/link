@@ -1,5 +1,5 @@
 {
-    "name": "foodieneers/bridge",
+    "name": "foodieneers/Link",
     "description": "Basic auth system for Laravel Intraserver api communication",
     "type": "package",
     "keywords": [
@@ -29,12 +29,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Foodieneers\\Bridge\\": "src/"
+            "Foodieneers\\Link\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Foodieneers\\Bridge\\Tests\\": "tests/",
+            "Foodieneers\\Link\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -68,7 +68,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Foodieneers\\Bridge\\BridgeServiceProvider"
+                "Foodieneers\\Link\\LinkServiceProvider"
             ]
         }
     },
