@@ -33,9 +33,9 @@ final readonly class Verifier
 
         $secret = $this->resolveSecret($key);
 
-        $rawBody = $request->getContent() ?? '';
-        $computedBodySha = $rawBody === '' ? '' : hash('sha256', $rawBody);
-
+        $rawBody = $request->getContent();
+        $computedBodySha = ($rawBody !== '') ? hash('sha256', $rawBody) : '';
+        
         $bodyHeader = (string) $request->header($this->config->headerBody());
         throw_if($bodyHeader !== '' && ! hash_equals($bodyHeader, $computedBodySha), BadRequestException::class, 'Body hash mismatch.');
 

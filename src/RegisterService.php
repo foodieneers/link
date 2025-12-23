@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Foodieneers\Link;
 
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
-use InvalidArgumentException;
-use Psr\Http\Message\RequestInterface;
 use Throwable;
+use Illuminate\Http\Request;
+use InvalidArgumentException;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\RequestInterface;
+use Illuminate\Http\Client\PendingRequest;
 
 final class RegisterService
 {
@@ -20,26 +22,20 @@ final class RegisterService
 
             throw_unless(is_array($link), InvalidArgumentException::class, "Link [$key] not configured at services.links.$key.");
 
-            $baseUrl = mb_rtrim((string) ($link['base_url'] ?? ''), '/');
+            $baseUrl = $link['base_url'] ?? '';
+            $secret = $link['secret'] ?? '';
 
-            $secret = (string) $link['secret'];
+            if (!is_string($baseUrl) || !is_string($secret)) {
+                throw new InvalidArgumentException("Config for [$key] must contain strings for base_url and secret.");
+            }
 
-            throw_if($baseUrl === '', InvalidArgumentException::class, "Link [$key] missing base_url.");
-            throw_if($secret === '', InvalidArgumentException::class, "Link [$key] missing secret.");
-
-            return Http::baseUrl($baseUrl)
+            return Http::baseUrl(mb_rtrim($baseUrl, '/'))
                 ->timeout(30)
-                ->retry(
-                    times: 5,
-                    sleepMilliseconds: 200,
-                    when: function (Throwable $e, $request, $response = null): bool {
-                        dd($e);
-                        if ($response === null) {
-                            return true;
-                        }
-                        return $response->serverError();
-                    }
-                )
+                ->retry(5, 200, 
+                    when: function (Throwable $e, Request $r): bool {
+                        $response = $r->response;
+                        return ! $response instanceof Response || $response->serverError();
+                    })
                 ->withRequestMiddleware(function (RequestInterface $request) use ($key, $secret): RequestInterface {
                     $headers = resolve(Signer::class)->headersFor($request, key: $key, secret: $secret);
                     foreach ($headers as $name => $value) {

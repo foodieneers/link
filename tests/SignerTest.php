@@ -28,7 +28,6 @@ it('adds Link signing headers to outgoing request', function () {
 
     config()->set('services.link.chat_b', [
         'base_url' => 'https://example.test',
-        'key' => 'chat_a',
         'secret' => 'super-secret',
     ]);
 
@@ -51,7 +50,6 @@ it('throws if Link is not configured', function () {
 it('throws if Link config is missing required fields', function () {
     config()->set('services.link.chat_b', [
         'base_url' => 'https://example.test',
-        'key' => '',
         'secret' => 's',
     ]);
 
@@ -62,7 +60,6 @@ it('throws if Link config is missing required fields', function () {
 it('uses baseUrl from config and trims trailing slash', function () {
     config()->set('services.link.chat_b', [
         'base_url' => 'https://example.test/', // trailing slash
-        'key' => 'chat_a',
         'secret' => 'super-secret',
     ]);
 
