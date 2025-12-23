@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Foodieneers\Bridge;
 
-use Illuminate\Http\Client\Request;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriInterface;
 
 final readonly class BridgeSigner
 {
@@ -17,53 +17,42 @@ final readonly class BridgeSigner
      * @param  RequestInterface  $request  Laravel HTTP client middleware request object
      * @return array<string, string>
      */
-public function headersFor(RequestInterface $request, string $key, string $secret): array
-{
-    $ts = time();
-    $nonce = $this->nonce();
+    public function headersFor(RequestInterface $request, string $key, string $secret): array
+    {
+        $ts = time();
+        $nonce = $this->nonce();
 
-    $method = mb_strtoupper($request->getMethod()); 
-    
-    $uri = $request->getUri();
-    $pathWithQuery = $this->pathWithQueryFromUri($uri);
+        $method = mb_strtoupper($request->getMethod());
 
-    $body = (string) $request->getBody();
-    $bodySha = $body === '' ? '' : hash('sha256', $body);
+        $uri = $request->getUri();
+        $pathWithQuery = $this->pathWithQueryFromUri($uri);
 
-    $canonical = $this->canonical(
-        ts: $ts,
-        nonce: $nonce,
-        method: $method,
-        pathWithQuery: $pathWithQuery,
-        bodySha256: $bodySha,
-    );
+        $body = (string) $request->getBody();
+        $bodySha = $body === '' ? '' : hash('sha256', $body);
 
-    $signature = hash_hmac('sha256', $canonical, $secret);
+        $canonical = $this->canonical(
+            ts: $ts,
+            nonce: $nonce,
+            method: $method,
+            pathWithQuery: $pathWithQuery,
+            bodySha256: $bodySha,
+        );
 
-    $headers = [
-        $this->config->headerKey() => $key,
-        $this->config->headerTs() => (string) $ts,
-        $this->config->headerNonce() => $nonce,
-        $this->config->headerSig() => $signature,
-    ];
+        $signature = hash_hmac('sha256', $canonical, $secret);
 
-    if ($bodySha !== '') {
-        $headers[$this->config->headerBody()] = $bodySha;
+        $headers = [
+            $this->config->headerKey() => $key,
+            $this->config->headerTs() => (string) $ts,
+            $this->config->headerNonce() => $nonce,
+            $this->config->headerSig() => $signature,
+        ];
+
+        if ($bodySha !== '') {
+            $headers[$this->config->headerBody()] = $bodySha;
+        }
+
+        return $headers;
     }
-
-    return $headers;
-}
-
-/**
- * Helper to extract path and query from PSR-7 UriInterface
- */
-private function pathWithQueryFromUri(\Psr\Http\Message\UriInterface $uri): string
-{
-    $path = $uri->getPath() ?: '/';
-    $query = $uri->getQuery();
-
-    return ($query !== '') ? "{$path}?{$query}" : $path;
-}
 
     public function canonical(
         int $ts,
@@ -79,6 +68,17 @@ private function pathWithQueryFromUri(\Psr\Http\Message\UriInterface $uri): stri
             $pathWithQuery,
             $bodySha256,
         ]);
+    }
+
+    /**
+     * Helper to extract path and query from PSR-7 UriInterface
+     */
+    private function pathWithQueryFromUri(UriInterface $uri): string
+    {
+        $path = $uri->getPath() ?: '/';
+        $query = $uri->getQuery();
+
+        return ($query !== '') ? "{$path}?{$query}" : $path;
     }
 
     private function nonce(): string

@@ -6,4 +6,4 @@ namespace Foodieneers\Bridge\Exceptions;
 
 use RuntimeException;
 
-class BadRequestException extends RuntimeException {}
+final class BadRequestException extends RuntimeException {}

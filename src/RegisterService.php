@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Foodieneers\Bridge;
 
-use Throwable;
-use InvalidArgumentException;
-use Illuminate\Http\Client\Request;
-use Foodieneers\Bridge\BridgeSigner;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
+use Throwable;
 
 final class RegisterService
 {
@@ -38,17 +36,18 @@ final class RegisterService
                         if ($response === null) {
                             return true;
                         }
+
                         return $response->serverError();
                     }
                 )
                 ->withRequestMiddleware(function (RequestInterface $request) use ($key, $secret): RequestInterface {
-                $headers = resolve(BridgeSigner::class)->headersFor($request, key: $key, secret: $secret);
+                    $headers = resolve(BridgeSigner::class)->headersFor($request, key: $key, secret: $secret);
 
-    foreach ($headers as $name => $value) {
-        $request = $request->withHeader($name, $value);
-    }
+                    foreach ($headers as $name => $value) {
+                        $request = $request->withHeader($name, $value);
+                    }
 
-    return $request;
+                    return $request;
                 });
 
         });

@@ -9,23 +9,23 @@ use Foodieneers\Bridge\Exceptions\BadRequestException;
 use Foodieneers\Bridge\Verifier;
 use Illuminate\Http\Request;
 
-final class VerifyBridgeRequest
+final readonly class VerifyBridgeRequest
 {
     public function __construct(
-        private readonly Verifier $verifier,
+        private Verifier $verifier,
     ) {}
 
     public function handle(Request $request, Closure $next): mixed
     {
-        try{
+        try {
             $result = $this->verifier->verify($request);
-            
+
             $request->attributes->set('bridge.key', $result->key);
-            
+
             return $next($request);
-        } catch(BadRequestException $e) {
+        } catch (BadRequestException) {
             return response()->json([
-                'message' => 'Bad Request'
+                'message' => 'Bad Request',
             ], 400);
         }
     }

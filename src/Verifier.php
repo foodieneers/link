@@ -4,41 +4,33 @@ declare(strict_types=1);
 
 namespace Foodieneers\Bridge;
 
-use Illuminate\Http\Request;
-use Foodieneers\Bridge\BridgeConfig;
-use Foodieneers\Bridge\VerificationResult;
 use Foodieneers\Bridge\Exceptions\BadRequestException;
+use Illuminate\Http\Request;
 
-final class Verifier
+final readonly class Verifier
 {
     public function __construct(
-        private readonly BridgeConfig $config = new BridgeConfig(),
-        private readonly NonceStore $nonces = new NonceStore(),
+        private BridgeConfig $config = new BridgeConfig(),
+        private NonceStore $nonces = new NonceStore(),
     ) {}
 
     public function verify(Request $request): VerificationResult
     {
-        $key   = (string) $request->header($this->config->headerKey());
+        $key = (string) $request->header($this->config->headerKey());
         $tsRaw = (string) $request->header($this->config->headerTs());
         $nonce = (string) $request->header($this->config->headerNonce());
-        $sig   = (string) $request->header($this->config->headerSig());
+        $sig = (string) $request->header($this->config->headerSig());
 
-        if ($key === '' || $tsRaw === '' || $nonce === '' || $sig === '') {
-            throw new BadRequestException('Missing bridge signature headers.');
-        }
+        throw_if($key === '' || $tsRaw === '' || $nonce === '' || $sig === '', BadRequestException::class, 'Missing bridge signature headers.');
 
-        if (! ctype_digit($tsRaw)) {
-            throw new BadRequestException('Invalid timestamp.');
-        }
+        throw_unless(ctype_digit($tsRaw), BadRequestException::class, 'Invalid timestamp.');
 
         $ts = (int) $tsRaw;
 
         $maxAge = $this->config->maxAgeSeconds();
         $now = time();
 
-        if ($ts <= 0 || abs($now - $ts) > $maxAge) {
-            throw new BadRequestException('Request timestamp outside allowed window.');
-        }
+        throw_if($ts <= 0 || abs($now - $ts) > $maxAge, BadRequestException::class, 'Request timestamp outside allowed window.');
 
         $secret = $this->resolveSecret($key);
 
@@ -46,11 +38,9 @@ final class Verifier
         $computedBodySha = $rawBody === '' ? '' : hash('sha256', $rawBody);
 
         $bodyHeader = (string) $request->header($this->config->headerBody());
-        if ($bodyHeader !== '' && ! hash_equals($bodyHeader, $computedBodySha)) {
-            throw new BadRequestException('Body hash mismatch.');
-        }
+        throw_if($bodyHeader !== '' && ! hash_equals($bodyHeader, $computedBodySha), BadRequestException::class, 'Body hash mismatch.');
 
-        $method = strtoupper($request->getMethod());
+        $method = mb_strtoupper($request->getMethod());
         $pathWithQuery = $request->getRequestUri();
 
         $canonical = $this->canonical(
@@ -63,13 +53,9 @@ final class Verifier
 
         $expected = hash_hmac('sha256', $canonical, $secret);
 
-        if (! hash_equals($expected, $sig)) {
-            throw new BadRequestException('Invalid signature.');
-        }
+        throw_unless(hash_equals($expected, $sig), BadRequestException::class, 'Invalid signature.');
 
-        if ($this->nonces->seen($key, $nonce, $ts)) {
-            throw new BadRequestException('Nonce already used.');
-        }
+        throw_if($this->nonces->seen($key, $nonce, $ts), BadRequestException::class, 'Nonce already used.');
 
         $this->nonces->mark($key, $nonce, $ts, $this->config->nonceTtlSeconds());
 
@@ -86,7 +72,7 @@ final class Verifier
         return implode("\n", [
             (string) $ts,
             $nonce,
-            strtoupper($method),
+            mb_strtoupper($method),
             $pathWithQuery,
             $bodySha256,
         ]);

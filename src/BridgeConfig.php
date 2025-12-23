@@ -31,7 +31,7 @@ final class BridgeConfig
         return 'X-Signature';
     }
 
-        public function maxAgeSeconds(): int
+    public function maxAgeSeconds(): int
     {
         return 300;
     }
