@@ -79,7 +79,7 @@ final readonly class Verifier
 
     private function resolveSecret(string $key): string
     {
-        $secret = config("services.Link.$key.secret");
+        $secret = config("services.link.$key.secret");
 
         if (is_string($secret) && $secret !== '') {
             return $secret;

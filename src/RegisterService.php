@@ -14,20 +14,18 @@ final class RegisterService
 {
     public function __invoke(): void
     {
-        Http::macro('link', function (string $name): PendingRequest {
+        Http::macro('link', function (string $key): PendingRequest {
             
-            $link = config("services.link.$name");
+            $link = config("services.link.$key");
 
-            throw_unless(is_array($link), InvalidArgumentException::class, "Link [$name] not configured at services.links.$name.");
+            throw_unless(is_array($link), InvalidArgumentException::class, "Link [$key] not configured at services.links.$key.");
 
             $baseUrl = mb_rtrim((string) ($link['base_url'] ?? ''), '/');
 
-            $key = (string) $link['key'];
             $secret = (string) $link['secret'];
 
-            throw_if($baseUrl === '', InvalidArgumentException::class, "Link [$name] missing base_url.");
-            throw_if($key === '', InvalidArgumentException::class, "Link [$name] missing key.");
-            throw_if($secret === '', InvalidArgumentException::class, "Link [$name] missing secret.");
+            throw_if($baseUrl === '', InvalidArgumentException::class, "Link [$key] missing base_url.");
+            throw_if($secret === '', InvalidArgumentException::class, "Link [$key] missing secret.");
 
             return Http::baseUrl($baseUrl)
                 ->timeout(30)
@@ -35,6 +33,7 @@ final class RegisterService
                     times: 5,
                     sleepMilliseconds: 200,
                     when: function (Throwable $e, $request, $response = null): bool {
+                        dd($e);
                         if ($response === null) {
                             return true;
                         }
@@ -43,11 +42,9 @@ final class RegisterService
                 )
                 ->withRequestMiddleware(function (RequestInterface $request) use ($key, $secret): RequestInterface {
                     $headers = resolve(Signer::class)->headersFor($request, key: $key, secret: $secret);
-
                     foreach ($headers as $name => $value) {
                         $request = $request->withHeader($name, $value);
                     }
-
                     return $request;
                 });
 

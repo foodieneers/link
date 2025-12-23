@@ -28,19 +28,19 @@ it('verifies a request in total isolation', function () {
 
     $request = Request::create($uri, $method, [], [], [], [], $body);
     $request->headers->add([
-        'X-Link-Key' => $key,
-        'X-Link-Timestamp' => (string) $fixedTime,
-        'X-Link-Nonce' => $nonce,
-        'X-Link-Signature' => $signature,
-        'X-Link-Body-Hash' => $bodySha,
+        'X-Sign-Key' => $key,
+        'X-Sign-Ts' => (string) $fixedTime,
+        'X-Sign-Nonce' => $nonce,
+        'X-Signature' => $signature,
+        'X-Sign-Sha256' => $bodySha,
     ]);
 
-    config()->set("services.link.$key.secret", $secret);
+    config()->set("services.link.$key", [
+        'secret' => $secret,
+        'base_url' => 'test',
+    ]);
 
     $verifier = new Verifier();
-
-    test()->travelTo(DateTimeImmutable::createFromFormat('U', (string) $fixedTime));
-
     $result = $verifier->verify($request);
 
     expect($result->key)->toBe($key);
