@@ -1,5 +1,5 @@
 {
-    "name": "foodieneers/api-auth",
+    "name": "foodieneers/bridge",
     "description": "Basic auth system for Laravel Intraserver api communication",
     "type": "package",
     "keywords": [
@@ -23,24 +23,23 @@
     },
     "require-dev": {
         "foodieneers/laravel-devtools": "dev-main",
-        "matthewbdaly/artisan-standalone": "*"
+        "matthewbdaly/artisan-standalone": "*",
+        "orchestra/testbench": "*"
     },
     "autoload": {
         "psr-4": {
-            "Foodieneers\\ApiAuth\\": "src/"
+            "Foodieneers\\Bridge\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Foodieneers\\ApiAuth\\Tests\\": "tests/",
+            "Foodieneers\\Bridge\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
     "scripts": {
-        "post-autoload-dump": "",
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
-        "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/pint",
         "dep:bump": [
             "composer bump"
@@ -68,7 +67,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Foodieneers\\ApiAuth\\ApiAuthServiceProvider"
+                "Foodieneers\\Bridge\\BridgeServiceProvider"
             ]
         }
     },
