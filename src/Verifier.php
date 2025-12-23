@@ -55,9 +55,9 @@ final readonly class Verifier
 
         throw_unless(hash_equals($expected, $sig), BadRequestException::class, 'Invalid signature.');
 
-        throw_if($this->nonces->seen($key, $nonce, $ts), BadRequestException::class, 'Nonce already used.');
+        throw_if($this->nonces->seen(), BadRequestException::class, 'Nonce already used.');
 
-        $this->nonces->mark($key, $nonce, $ts, $this->config->nonceTtlSeconds());
+        $this->nonces->mark();
 
         return new VerificationResult($key, $ts, $nonce);
     }

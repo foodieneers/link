@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Route;
 use Foodieneers\Bridge\Http\Controllers\UpController;
+use Illuminate\Support\Facades\Route;
 
 beforeEach(function (): void {
     Route::get('/test', UpController::class);

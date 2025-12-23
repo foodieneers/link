@@ -1,9 +1,8 @@
 <?php
 
-use Foodieneers\Bridge\Verifier;
-use Foodieneers\Bridge\NonceStore;
-use Foodieneers\Bridge\BridgeConfig;
+declare(strict_types=1);
 
+use Foodieneers\Bridge\Verifier;
 use Illuminate\Http\Request;
 
 it('verifies a request in total isolation', function () {
@@ -29,18 +28,18 @@ it('verifies a request in total isolation', function () {
 
     $request = Request::create($uri, $method, [], [], [], [], $body);
     $request->headers->add([
-        'X-Bridge-Key'       => $key,
+        'X-Bridge-Key' => $key,
         'X-Bridge-Timestamp' => (string) $fixedTime,
-        'X-Bridge-Nonce'     => $nonce,
+        'X-Bridge-Nonce' => $nonce,
         'X-Bridge-Signature' => $signature,
         'X-Bridge-Body-Hash' => $bodySha,
     ]);
 
-    config()->set( "services.bridge.$key.secret", $secret);
+    config()->set("services.bridge.$key.secret", $secret);
 
     $verifier = new Verifier();
-    
-    test()->travelTo(DateTime::createFromFormat('U', (string)$fixedTime));
+
+    test()->travelTo(DateTimeImmutable::createFromFormat('U', (string) $fixedTime));
 
     $result = $verifier->verify($request);
 
